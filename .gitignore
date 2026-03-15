@@ -40,3 +40,6 @@ out/
 # Logs
 logs/
 *.log
+
+# just dev
+dev_commands.md
