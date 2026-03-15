@@ -18,10 +18,9 @@ tarjetas/
 ├── postman_collection.json               # Colección Postman con los 6 endpoints
 ├── settings.gradle                       # Nombre del proyecto Gradle
 ├── PROJECT_MAP.md                        # ← Este archivo (mapa del proyecto)
-├── TODO.md                               # Seguimiento de tareas pendientes
 │
 ├── src/main/resources/
-│   ├── application.properties            # Configuración: R2DBC, actuadores, AES, H2 console
+│   ├── application.properties            # Configuración: R2DBC, actuadores, AES, H2 console, CORS, reglas de negocio
 │   └── schema.sql                        # DDL: tablas CARD, TRANSACTION, AUDIT (sintaxis Oracle/H2)
 │
 ├── src/main/java/com/prueba_be/tarjetas/
@@ -42,12 +41,12 @@ tarjetas/
 │   ├── application/                      # 🟢 CAPA DE APLICACIÓN (casos de uso / lógica de negocio)
 │   │   └── usecase/
 │   │       ├── CardUseCase.java          # Crear tarjeta, enrolar, consultar, eliminar (borrado lógico)
-│   │       │                             #   - Genera hash AES (PAN + fecha) como identificador
-│   │       │                             #   - Genera número de validación aleatorio (1-100)
-│   │       │                             #   - Enmascara PAN: 123456******3456
+│   │       │                             #   - Genera hash AES (PAN + fecha) como identificador (longitud configurable)
+│   │       │                             #   - Genera número de validación aleatorio (rango configurable)
+│   │       │                             #   - Enmascara PAN (prefijo/sufijo visible configurable)
 │   │       └── TransactionUseCase.java   # Crear transacción (compra), anular transacción
 │   │                                     #   - Valida tarjeta exista y esté enrolada
-│   │                                     #   - Anulación solo si < 5 minutos desde creación
+│   │                                     #   - Tiempo límite de anulación configurable vía properties
 │   │
 │   └── infrastructure/                   # 🟠 CAPA DE INFRAESTRUCTURA (adaptadores, config)
 │       ├── adapter/
@@ -76,7 +75,8 @@ tarjetas/
 │           ├── AuditEventListener.java   # AfterSaveCallback: registra auditoría automática en BD
 │           │                             #   - CARD: CREAR, ENROLAR, ELIMINAR
 │           │                             #   - TRANSACTION: CREAR, ANULAR
-│           ├── H2ConsoleConfig.java      # Consola H2 web en puerto 8082 (WebFlux no soporta servlet)
+│           ├── CorsConfig.java           # CORS global con orígenes configurables desde properties
+│           ├── H2ConsoleConfig.java      # Consola H2 web en puerto configurable (WebFlux no soporta servlet)
 │           └── R2dbcAuditConfig.java     # Habilita @EnableR2dbcAuditing
 │
 ├── src/test/resources/
@@ -85,11 +85,15 @@ tarjetas/
 └── src/test/java/com/prueba_be/tarjetas/
     ├── CardsApplicationTests.java                        # Test de carga de contexto Spring
     ├── application/usecase/
-    │   ├── CardUseCaseTest.java                          # Tests unitarios: crear, enrolar, validación inválida
+    │   ├── CardUseCaseTest.java                          # Tests unitarios: crear, enrolar, validación inválida, eliminar
     │   └── TransactionUseCaseTest.java                   # Tests unitarios: crear txn, tarjeta no existe, anular, tiempo expirado
-    └── infrastructure/adapter/out/persistence/
-        ├── CardPersistenceIntegrationTest.java           # Tests integración: INSERT, UPDATE, findById, no encontrado
-        └── TransactionPersistenceIntegrationTest.java    # Tests integración: INSERT, findByRef, no encontrado
+    └── infrastructure/adapter/
+        ├── in/web/
+        │   ├── CardControllerTest.java                   # Tests de endpoints REST de tarjetas con WebTestClient
+        │   └── TransactionControllerTest.java            # Tests de endpoints REST de transacciones con WebTestClient
+        └── out/persistence/
+            ├── CardPersistenceIntegrationTest.java       # Tests integración: INSERT, UPDATE, findById, no encontrado
+            └── TransactionPersistenceIntegrationTest.java # Tests integración: INSERT, findByRef, no encontrado
 ```
 
 ---
@@ -104,9 +108,9 @@ CardController.createCard()          ← Adaptador de ENTRADA (valida @Valid req
     │  Mapea DTO → Card domain
     ▼
 CardUseCase.createCard()             ← CASO DE USO (lógica de negocio)
-    │  1. Genera identificador (hash AES: PAN + fecha)
-    │  2. Genera número de validación (1-100)
-    │  3. Enmascara PAN (123456******3456)
+    │  1. Genera identificador (hash AES: PAN + fecha, longitud configurable)
+    │  2. Genera número de validación (rango configurable vía properties)
+    │  3. Enmascara PAN (prefijo/sufijo configurable vía properties)
     │  4. Establece estado CREADA
     ▼
 CardRepositoryPort.save()            ← PUERTO de salida (interfaz del dominio)
@@ -208,5 +212,5 @@ Cliente HTTP recibe JSON: { codigo: "00", mensaje: "Éxito", ... }
 | 4 | Principios SOLID | ✅ | |
 | 5 | JUnit + JaCoCo | ✅ | |
 | 6 | SonarQube | ✅ | Configurado en build.gradle |
-| 7 | Variables extraídas a config | ✅ | Clave AES via env var: `${TARJETAS_SECURITY_AES_SECRET:BancoSecreto1234}` |
+| 7 | Variables extraídas a config | ✅ | AES secret, CORS, tiempo anulación, rango validación, longitud ID, máscara PAN, puerto H2 — todo configurable desde `application.properties` o variables de entorno |
 | 8 | Tests unitarios + integración | ✅ | 100% success |
