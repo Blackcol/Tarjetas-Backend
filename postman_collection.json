@@ -1,0 +1,571 @@
+{
+  "info": {
+    "_postman_id": "2c8e155a-5875-4893-966c-1d7d543a63fc",
+    "name": "Prueba - Tarjetas y Transacciones",
+    "description": "Colección de Postman para probar la API Reactiva WebFlux de Tarjetas y Transacciones (Arquitectura Hexagonal).",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "11209581"
+  },
+  "item": [
+    {
+      "name": "Tarjetas",
+      "item": [
+        {
+          "name": "1. Crear Tarjeta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"pan\": \"1234567890123455\",\n  \"titular\": \"Juan Perez\", \n  \"cedula\": \"1010101010\",\n  \"tipo\": \"Crédito\",\n  \"telefono\": \"3001234567\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/tarjeta",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "tarjeta"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Validaciones",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\r\n    \"pan\": \"123\",\r\n    \"titular\": \"Juan\",\r\n    \"cedula\": \"1\",\r\n    \"tipo\": \"Invalido\",\r\n    \"telefono\": \"1\"\r\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/tarjeta",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "tarjeta"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "257"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"codigo\": \"03\",\n    \"mensaje\": \"Error de validación en los campos\",\n    \"errores\": {\n        \"nationalId\": \"el tamaño debe estar entre 10 y 15\",\n        \"phone\": \"el tamaño debe estar entre 10 y 10\",\n        \"pan\": \"el tamaño debe estar entre 16 y 19\",\n        \"type\": \"Tipo debe ser Crédito o Débito\"\n    }\n}"
+            }
+          ]
+        },
+        {
+          "name": "2. Enrolar Tarjeta",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificador\": \"6f9fc6e4eb1ecf3\",\n  \"numeroValidacion\": 87\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/tarjeta/enrolar",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "tarjeta",
+                "enrolar"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Error 01",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identificador\": \"x\",\n  \"numeroValidacion\": 0\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/tarjeta/enrolar",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "tarjeta",
+                    "enrolar"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "45"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"codigo\": \"01\",\n    \"mensaje\": \"Tarjeta no existe\"\n}"
+            },
+            {
+              "name": "Error 02",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identificador\": \"82a97aa9ff24bba\",\n  \"numeroValidacion\": 101\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/tarjeta/enrolar",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "tarjeta",
+                    "enrolar"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "60"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"codigo\": \"02\",\n    \"mensaje\": \"Número de validación inválido\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "3. Consultar Tarjeta",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "http://localhost:8080/api/tarjeta?identificador=82a97aa9ff24bbaaa",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "tarjeta"
+              ],
+              "query": [
+                {
+                  "key": "identificador",
+                  "value": "82a97aa9ff24bbaaa"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "4. Eliminar Tarjeta",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificador\": \"82a97aa9ff24bba\"\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/tarjeta",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "tarjeta"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Transacciones",
+      "item": [
+        {
+          "name": "5. Crear Transacción (Compra)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificador\": \"6f9fc6e4eb1ecf3\", // identificador y/o numero referencia deben variar para evitar transacciones duplicadas\n  \"numeroReferencia\": \"123456\",\n  \"totalCompra\": 15000.50,\n  \"direccionCompra\": \"Calle 123 Bogotá\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/transaccion",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "transaccion"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Error 01",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identificador\": \"NOEXIST123\",\n  \"numeroReferencia\": \"999999\",\n  \"totalCompra\": 1000,\n  \"direccionCompra\": \"No existe\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/transaccion",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "transaccion"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "45"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"codigo\": \"01\",\n    \"mensaje\": \"Tarjeta no existe\"\n}"
+            },
+            {
+              "name": "Error 02",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identificador\": \"6f9fc6e4eb1ecf3\", // usar tarjeta no enrolada\n  \"numeroReferencia\": \"123456\",\n  \"totalCompra\": 15000.50,\n  \"direccionCompra\": \"Calle 123 Bogotá\"\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/transaccion",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "transaccion"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "47"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"codigo\": \"02\",\n    \"mensaje\": \"Tarjeta no enrolada\"\n}"
+            }
+          ]
+        },
+        {
+          "name": "6. Anular Transacción",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"identificador\": \"6f9fc6e4eb1ecf3\",\n  \"numeroReferencia\": \"123456\",\n  \"totalCompra\": 15000.50\n}"
+            },
+            "url": {
+              "raw": "http://localhost:8080/api/transaccion/anular",
+              "protocol": "http",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "transaccion",
+                "anular"
+              ]
+            }
+          },
+          "response": [
+            {
+              "name": "Error 02",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json",
+                    "type": "text"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identificador\": \"6f9fc6e4eb1ecf3\", // ya debio anularse antes\n  \"numeroReferencia\": \"123456\",\n  \"totalCompra\": 15000.50\n}",
+                  "options": {
+                    "raw": {
+                      "language": "json"
+                    }
+                  }
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/transaccion/anular",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "transaccion",
+                    "anular"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "72"
+                }
+              ],
+              "cookie": [
+                {
+                  "expires": "Invalid Date",
+                  "domain": "",
+                  "path": ""
+                }
+              ],
+              "body": "{\n    \"codigo\": \"02\",\n    \"mensaje\": \"No se puede anular transacción (Ya anulada)\"\n}"
+            },
+            {
+              "name": "Error 01",
+              "originalRequest": {
+                "method": "POST",
+                "header": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ],
+                "body": {
+                  "mode": "raw",
+                  "raw": "{\n  \"identificador\": \"REEMPLAZAR_CON_IDENTIFICADOR\",\n  \"numeroReferencia\": \"123456\",\n  \"totalCompra\": 150.50\n}"
+                },
+                "url": {
+                  "raw": "http://localhost:8080/api/transaccion/anular",
+                  "protocol": "http",
+                  "host": [
+                    "localhost"
+                  ],
+                  "port": "8080",
+                  "path": [
+                    "api",
+                    "transaccion",
+                    "anular"
+                  ]
+                }
+              },
+              "status": "Bad Request",
+              "code": 400,
+              "_postman_previewlanguage": "json",
+              "header": [
+                {
+                  "key": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "key": "Content-Length",
+                  "value": "59"
+                }
+              ],
+              "cookie": [],
+              "body": "{\n    \"codigo\": \"01\",\n    \"mensaje\": \"Número de referencia inválido\"\n}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
