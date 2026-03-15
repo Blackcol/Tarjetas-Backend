@@ -306,4 +306,4 @@ El proyecto mantiene un mínimo de **80% de cobertura** verificado por JaCoCo.
 
 ## Colección Postman
 
-El archivo `Prueba - Tarjetas y Transacciones.postman_collection.json` incluido en la raíz del proyecto contiene todos los endpoints listos para importar en Postman.
+El archivo `postman_collection.json` incluido en la raíz del proyecto contiene todos los endpoints listos para importar en Postman.
