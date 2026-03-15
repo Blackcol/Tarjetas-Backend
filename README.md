@@ -287,20 +287,73 @@ Las capas internas (domain, application) no conocen las externas. Los puertos de
 
 ---
 
-## Tests
+## Tests y Cobertura de Código
+
+### Ejecutar tests
 
 ```bash
-# Ejecutar todos los tests
 ./gradlew test
-
-# Ver reporte de cobertura (se genera automáticamente)
-# Abrir: build/reports/jacoco/test/html/index.html
-
-# Ver reporte de tests
-# Abrir: build/reports/tests/test/index.html
 ```
 
-El proyecto mantiene un mínimo de **80% de cobertura** verificado por JaCoCo.
+Los 29 tests del proyecto cubren:
+
+- **Tests unitarios:** Casos de uso (`CardUseCaseTest`, `TransactionUseCaseTest`) con Mockito
+- **Tests de integración:** Persistencia R2DBC (`CardPersistenceIntegrationTest`, `TransactionPersistenceIntegrationTest`) contra H2
+- **Tests de controllers:** Endpoints REST (`CardControllerTest`, `TransactionControllerTest`) con WebTestClient
+
+### Ver reporte de tests
+
+Después de ejecutar `./gradlew test`, abrir en el navegador:
+
+```
+build/reports/tests/test/index.html
+```
+
+### Cobertura con JaCoCo
+
+El reporte de cobertura se genera automáticamente al ejecutar los tests. Para consultarlo:
+
+```bash
+# 1. Ejecutar tests (genera el reporte automáticamente)
+./gradlew test
+
+# 2. Abrir el reporte HTML en el navegador:
+#    build/reports/jacoco/test/html/index.html
+```
+
+Para verificar que la cobertura cumple con el mínimo del **80%**:
+
+```bash
+./gradlew jacocoTestCoverageVerification
+```
+
+Si la cobertura es inferior al 80%, este comando falla indicando el porcentaje actual. Si pasa sin errores, la cobertura cumple el umbral.
+
+El reporte XML para integración con SonarQube se genera en:
+
+```
+build/reports/jacoco/test/jacocoTestReport.xml
+```
+
+---
+
+## Producción con Oracle
+
+Para usar Oracle como base de datos en producción:
+
+```bash
+# 1. Levantar Oracle con Docker
+docker-compose up -d
+
+# 2. Crear un perfil application-prod.properties con:
+spring.r2dbc.url=r2dbc:oracle://localhost:1521/FREEPDB1
+spring.r2dbc.username=tu_usuario
+spring.r2dbc.password=tu_password
+h2.console.enabled=false
+
+# 3. Ejecutar con el perfil de producción
+./gradlew bootRun --args='--spring.profiles.active=prod'
+```
 
 ---
 
