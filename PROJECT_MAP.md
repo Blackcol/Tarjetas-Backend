@@ -13,7 +13,7 @@ API RESTful reactiva para administración de tarjetas de crédito/débito y tran
 ## 🏗️ Estructura del Proyecto
 
 ```
-tarjetas/
+/
 ├── build.gradle                          # Configuración Gradle, dependencias, JaCoCo, SonarQube
 ├── postman_collection.json               # Colección Postman con los 6 endpoints
 ├── settings.gradle                       # Nombre del proyecto Gradle

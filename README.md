@@ -25,7 +25,6 @@ API reactiva para la gestión de tarjetas de crédito/débito y transacciones de
 
 ```bash
 git clone <url-del-repositorio>
-cd proyecto/backend/tarjetas
 ```
 
 ### 2. Compilar y ejecutar tests
